@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.Commit;
 import org.zerock.b01.domain.Member;
 import org.zerock.b01.domain.MemberRole;
 
@@ -78,5 +79,23 @@ public class MemberRepositoryTests {
 //        2024-10-16T17:13:16.762+09:00  INFO 13452 --- [    Test worker] o.z.b.repository.MemberRepositoryTests   : [ADMIN, USER]
 //        2024-10-16T17:13:16.764+09:00  INFO 13452 --- [    Test worker] o.z.b.repository.MemberRepositoryTests   : ADMIN
 //        2024-10-16T17:13:16.766+09:00  INFO 13452 --- [    Test worker] o.z.b.repository.MemberRepositoryTests   : USER
+    }
+
+    @Test // 762 추가 테스트 소셜로그인 암호 변경 체크용
+    @Commit
+    public void testUpdate() {
+
+        String mid ="a01051634062@gmail.com";   // 소셜로그인으로 추가된 사용자로 현재 db에 존재하는 이메일
+        String mpw = passwordEncoder.encode("54321");
+
+        memberRepository.updatePassword(mpw,mid);
+
+//        Hibernate:
+//        update
+//                member
+//        set
+//        mpw=?
+//        where
+//        mid=?
     }
 }

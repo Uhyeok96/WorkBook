@@ -5,13 +5,15 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
+import java.util.Map;
 
 @Getter
 @Setter
 @ToString
-public class MemberSecurityDTO extends User {
+public class MemberSecurityDTO extends User implements OAuth2User {
 
     // import org.springframework.security.core.userdetails.User; 부모클래스로 사용
     // 도메인으로 회원은 특별한 점은 없지만 시큐리티를 이용하는 경우 회원 dto는 해당 api에 맞게 작성되어야 함.
@@ -24,6 +26,7 @@ public class MemberSecurityDTO extends User {
     private boolean del;
     private boolean social;
 
+    private Map<String, Object> props ; // 소셜 로그인 정보 754 추가
 
     // 생성자 -> extends User 에서 받음
     // public MemberSecurityDTO(String username, String password, Collection<? extends GrantedAuthority> authorities) {
@@ -38,5 +41,15 @@ public class MemberSecurityDTO extends User {
         this.del = del;
         this.social = social;
 
+    }
+
+    // 754 추가
+    public Map<String, Object> getAttributes() {
+        return this.getProps();
+    }
+
+    @Override
+    public String getName() {
+        return this.mid;
     }
 }

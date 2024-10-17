@@ -13,10 +13,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.zerock.b01.security.CustomUserDetailService;
 import org.zerock.b01.security.handler.Custom403Handler;
+import org.zerock.b01.security.handler.CustomSocialLoginSuccessHandler;
 
 import javax.sql.DataSource;
 
@@ -90,9 +92,16 @@ public class CustomSecurityConfig{
 
             httpSecurityExceptionHandlingConfigurer.accessDeniedHandler(accessDeniedHandler());
         });
+
+        // 차단됨 http.oauth2Login().loginPage("/member/login");
+        http.oauth2Login( httpSecurityOAuth2LoginConfigurer -> {
+            httpSecurityOAuth2LoginConfigurer.loginPage("/member/login");
+            //httpSecurityOAuth2LoginConfigurer.successHandler(authenticationSuccessHandler());
+        });
         
         return http.build();
     }
+
     
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer(){
@@ -126,5 +135,10 @@ public class CustomSecurityConfig{
     @Bean // 718 추가 권한이 없는 사용자 처리용
     public AccessDeniedHandler accessDeniedHandler() {
         return new Custom403Handler();
+    }
+
+    @Bean // 760 추가 소셜 회원가입 후 암호 설정
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new CustomSocialLoginSuccessHandler(passwordEncoder());
     }
 }
